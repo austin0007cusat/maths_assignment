@@ -1,0 +1,456 @@
+\documentclass[aspectratio=169,11pt]{beamer}
+
+\usetheme{default}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb,bm}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{xcolor}
+
+% Minimal one-accent palette for a simple academic presentation
+\definecolor{navy}{HTML}{1F3A5F}
+\definecolor{blue}{HTML}{1F3A5F}
+\definecolor{teal}{HTML}{1F3A5F}
+\definecolor{orange}{HTML}{1F3A5F}
+\definecolor{cream}{HTML}{FFFFFF}
+\definecolor{ink}{HTML}{111111}
+\definecolor{muted}{HTML}{555555}
+
+\setbeamercolor{normal text}{fg=ink,bg=cream}
+\setbeamercolor{frametitle}{fg=navy,bg=cream}
+\setbeamercolor{structure}{fg=blue}
+\setbeamercolor{alerted text}{fg=orange}
+\setbeamercolor{block title}{fg=navy,bg=white}
+\setbeamercolor{block body}{fg=ink,bg=white}
+\setbeamercolor{block title example}{fg=navy,bg=white}
+\setbeamercolor{block body example}{fg=ink,bg=white}
+\setbeamercolor{block title alerted}{fg=navy,bg=white}
+\setbeamercolor{block body alerted}{fg=ink,bg=white}
+\setbeamercolor{footline}{fg=muted,bg=cream}
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{itemize item}{\color{teal}$\blacktriangleright$}
+\setbeamertemplate{itemize subitem}{\color{orange}$\bullet$}
+\setbeamertemplate{blocks}[default]
+\setbeamertemplate{frametitle}{%
+  \vspace{0.35cm}\hspace{0.15cm}\insertframetitle\par
+  \vspace{-0.15cm}\hspace{0.15cm}{\color{navy}\rule{1.1cm}{1.2pt}}
+}
+
+
+\newcommand{\keyeq}[1]{%
+  \begin{center}
+  \setlength{\fboxsep}{9pt}%
+  {\color{navy}$\displaystyle #1$}
+  \end{center}}
+
+\title{Vector Spaces, Hyperplanes\and the Perceptron}
+\subtitle{Module 2 - Mathematics for Computing}
+\author{Austin Sabu}
+\date{September 2026}
+
+\begin{document}
+
+% 1
+\begin{frame}[plain]
+  \vspace{0.8cm}
+  {\color{navy}\rule{2.0cm}{1.5pt}}\\[0.45cm]
+  {\fontsize{30}{34}\selectfont\bfseries\color{navy}Vector Spaces, Hyperplanes\\and the Perceptron}\\[0.35cm]
+  {\large\color{blue}Module 2 - Mathematics for Computing}\\[0.8cm]
+  {\normalsize\bfseries Austin Sabu}\\
+  {\small MTECH in CSE(AIDS)}\\
+\end{frame}
+
+% 2
+\begin{frame}{The learning path leads to one classifier}
+\begin{columns}[T,onlytextwidth]
+\column{0.47\textwidth}
+\begin{block}{Mathematical foundation}
+\begin{itemize}
+  \item Algebraic structures
+  \item Vectors and vector spaces
+  \item Inner products and norms
+  \item Angles and orthogonality
+\end{itemize}
+\end{block}
+\column{0.47\textwidth}
+\begin{exampleblock}{Machine-learning application}
+\begin{itemize}
+  \item Lines, planes and hyperplanes
+  \item Weight vectors and bias
+  \item Perceptron decision rule
+  \item Linear classification
+\end{itemize}
+\end{exampleblock}
+\end{columns}
+\vspace{0.25cm}
+\keyeq{\hat y=\phi(\bm w^{\mathsf T}\bm x+b)}
+\end{frame}
+
+% 3
+\begin{frame}{Each algebraic structure adds one property}
+\small
+\begin{tabular}{>{\bfseries}lccccc}
+\toprule
+Structure & Closure & Associative & Identity & Inverse & Commutative\\
+\midrule
+Magma         & \checkmark &--&--&--&--\\
+Semigroup     & \checkmark &\checkmark&--&--&--\\
+Monoid        & \checkmark &\checkmark&\checkmark&--&--\\
+Group         & \checkmark &\checkmark&\checkmark&\checkmark&--\\
+Abelian group & \checkmark &\checkmark&\checkmark&\checkmark&\checkmark\\
+\bottomrule
+\end{tabular}
+\vspace{0.5cm}
+\begin{itemize}
+  \item Closure: $a,b\in S\Rightarrow a*b\in S$.
+  \item Associativity: $a*(b*c)=(a*b)*c$.
+  \item Identity: $a*e=e*a=a$.
+  \item Inverse: $a*a^{-1}=a^{-1}*a=e$.
+\end{itemize}
+\end{frame}
+
+% 4
+\begin{frame}{A field supplies the scalars of a vector space}
+\begin{columns}[T,onlytextwidth]
+\column{0.45\textwidth}
+\begin{block}{Ring}
+A set with addition and multiplication, where addition forms an Abelian group and multiplication distributes over addition.
+\end{block}
+\begin{exampleblock}{Example}
+$(\mathbb Z,+,\cdot)$ is a ring, but not a field.
+\end{exampleblock}
+\column{0.49\textwidth}
+\begin{block}{Field}
+A ring in which each nonzero element has a multiplicative inverse.
+\end{block}
+\begin{exampleblock}{Examples}
+$\mathbb Q$, $\mathbb R$ and $\mathbb C$ are fields. Vector spaces in machine learning normally use $\mathbb R$.
+\end{exampleblock}
+\end{columns}
+\end{frame}
+
+% 5
+\begin{frame}{Vectors combine magnitude, direction and features}
+\begin{columns}[T,onlytextwidth]
+\column{0.48\textwidth}
+\begin{block}{Vector-space notation}
+\[
+(V,F,+,\cdot)
+\]
+\begin{itemize}
+  \item $V$: set of vectors
+  \item $F$: scalar field
+  \item $+$: vector addition
+  \item $\cdot$: scalar multiplication
+\end{itemize}
+\end{block}
+\column{0.46\textwidth}
+\begin{exampleblock}{Example in $\mathbb R^2$}
+\[
+\bm v=\begin{bmatrix}2\\3\end{bmatrix},\qquad
+3\bm v=\begin{bmatrix}6\\9\end{bmatrix}
+\]
+The vector can represent a geometric displacement or two numerical features of an object.
+\end{exampleblock}
+\end{columns}
+\end{frame}
+
+% 6
+\begin{frame}{Vector operations act component by component}
+\begin{columns}[T,onlytextwidth]
+\column{0.48\textwidth}
+\begin{block}{Addition}
+\[
+\bm u+\bm v=
+\begin{bmatrix}u_1+v_1\\u_2+v_2\\\vdots\\u_n+v_n\end{bmatrix}
+\]
+\end{block}
+\column{0.46\textwidth}
+\begin{exampleblock}{Worked example}
+\[
+\begin{bmatrix}3\\5\\2\end{bmatrix}+
+\begin{bmatrix}1\\3\\4\end{bmatrix}=
+\begin{bmatrix}4\\8\\6\end{bmatrix}
+\]
+\end{exampleblock}
+\end{columns}
+\vspace{0.25cm}
+Scalar multiplication stretches, shrinks, or reverses a vector while preserving its line of direction.
+\end{frame}
+
+% 7
+\begin{frame}{The dot product links algebra and geometry}
+\keyeq{\langle\bm u,\bm v\rangle=\bm u^{\mathsf T}\bm v=\sum_{i=1}^{n}u_iv_i}
+\begin{columns}[T,onlytextwidth]
+\column{0.47\textwidth}
+\begin{block}{Magnitude}
+\[
+\|\bm v\|=\sqrt{\langle\bm v,\bm v\rangle}
+\]
+The squared norm is $\|\bm v\|^2=\langle\bm v,\bm v\rangle$.
+\end{block}
+\column{0.47\textwidth}
+\begin{exampleblock}{Example}
+For $\bm v=(3,4)$,
+\[
+\|\bm v\|=\sqrt{3^2+4^2}=5.
+\]
+The corresponding unit vector is $(3/5,4/5)$.
+\end{exampleblock}
+\end{columns}
+\end{frame}
+
+% 8
+\begin{frame}{Distance and angle follow from the inner product}
+\begin{columns}[T,onlytextwidth]
+\column{0.46\textwidth}
+\begin{block}{Euclidean distance}
+\[
+d(\bm u,\bm v)=\|\bm v-\bm u\|
+\]
+For $\bm u=(1,2)$ and $\bm v=(4,6)$,
+\[
+d=\sqrt{3^2+4^2}=5.
+\]
+\end{block}
+\column{0.48\textwidth}
+\begin{exampleblock}{Angle between nonzero vectors}
+\[
+\cos\theta=\frac{\bm u\cdot\bm v}{\|\bm u\|\,\|\bm v\|}
+\]
+\[
+\theta=\cos^{-1}\!\left(\frac{\bm u\cdot\bm v}{\|\bm u\|\,\|\bm v\|}\right)
+\]
+\end{exampleblock}
+\end{columns}
+\end{frame}
+
+% 9
+\begin{frame}{A metric formalizes what distance must mean}
+A metric space is a pair $(X,d)$, where $X$ is a set and $d$ assigns a distance to every pair of points.
+\begin{columns}[T,onlytextwidth]
+\column{0.47\textwidth}
+\begin{block}{Essential properties}
+\begin{enumerate}
+  \item $d(\bm x,\bm y)\ge 0$
+  \item $d(\bm x,\bm y)=0\iff\bm x=\bm y$
+  \item $d(\bm x,\bm y)=d(\bm y,\bm x)$
+\end{enumerate}
+\end{block}
+\column{0.47\textwidth}
+\begin{exampleblock}{Triangle inequality}
+\[
+d(\bm x,\bm z)\le d(\bm x,\bm y)+d(\bm y,\bm z)
+\]
+In Euclidean space, the usual metric is $d(\bm u,\bm v)=\|\bm v-\bm u\|$.
+\end{exampleblock}
+\end{columns}
+\end{frame}
+
+% 10
+\begin{frame}{Orthogonality is detected by a zero dot product}
+\begin{columns}[T,onlytextwidth]
+\column{0.47\textwidth}
+\begin{block}{Perpendicular vectors}
+\[
+\bm u\perp\bm v\quad\Longleftrightarrow\quad \bm u\cdot\bm v=0
+\]
+Example:
+\[
+(1,2)\cdot(2,-1)=2-2=0.
+\]
+\end{block}
+\column{0.47\textwidth}
+\begin{exampleblock}{Cosine similarity}
+\[
+\operatorname{sim}(\bm u,\bm v)=
+\frac{\bm u\cdot\bm v}{\|\bm u\|\,\|\bm v\|}
+\]
+$1$: same direction\\
+$0$: orthogonal\\
+$-1$: opposite direction
+\end{exampleblock}
+\end{columns}
+\end{frame}
+
+% 11
+\begin{frame}{A hyperplane generalizes a line and a plane}
+\keyeq{\bm w^{\mathsf T}\bm x+b=0}
+\begin{columns}[T,onlytextwidth]
+\column{0.46\textwidth}
+\begin{block}{By dimension}
+\begin{itemize}
+  \item In $\mathbb R^2$: a line
+  \item In $\mathbb R^3$: a plane
+  \item In $\mathbb R^n$: an $(n-1)$-dimensional hyperplane
+\end{itemize}
+\end{block}
+\column{0.48\textwidth}
+\begin{exampleblock}{Parameter roles}
+\begin{itemize}
+  \item $\bm w$: normal or weight vector
+  \item $b$: bias or intercept
+  \item Changing $\bm w$ changes orientation
+  \item Changing $b$ shifts the boundary
+\end{itemize}
+\end{exampleblock}
+\end{columns}
+\end{frame}
+
+% 12
+\begin{frame}{Why $(a,b)$ is perpendicular to $ax+by+c=0$}
+Choose any two points $P=(x_1,y_1)$ and $Q=(x_2,y_2)$ on the line. Then
+\[
+ax_1+by_1+c=0,
+\qquad
+ax_2+by_2+c=0.
+\]
+Subtracting the second equation from the first gives
+\[
+a(x_1-x_2)+b(y_1-y_2)=0.
+\]
+But the direction vector along the line is $\overrightarrow{QP}=(x_1-x_2,y_1-y_2)$, so
+\[
+(a,b)\cdot\overrightarrow{QP}=0.
+\]
+\begin{exampleblock}{Conclusion}
+A zero dot product means perpendicular vectors. Therefore, the coefficient vector $(a,b)$ is normal to the line $ax+by+c=0$.
+\end{exampleblock}
+\end{frame}
+
+% 13
+\begin{frame}{The weight vector is normal to the hyperplane}
+Let $\bm x_1$ and $\bm x_2$ be two points on the same hyperplane:
+\[
+\bm w^{\mathsf T}\bm x_1+b=0,
+\qquad
+\bm w^{\mathsf T}\bm x_2+b=0.
+\]
+Subtracting the equations gives:
+\[
+\bm w^{\mathsf T}(\bm x_1-\bm x_2)=0.
+\]
+\begin{exampleblock}{Geometric meaning}
+$\bm x_1-\bm x_2$ lies along the hyperplane. Its dot product with $\bm w$ is zero, so $\bm w$ is perpendicular to every direction along the hyperplane.
+\end{exampleblock}
+\end{frame}
+
+% 14
+\begin{frame}{Augmented vectors absorb the bias term}
+\begin{columns}[T,onlytextwidth]
+\column{0.45\textwidth}
+\[
+\widetilde{\bm w}=
+\begin{bmatrix}\bm w\\b\end{bmatrix},
+\qquad
+\widetilde{\bm x}=
+\begin{bmatrix}\bm x\\1\end{bmatrix}
+\]
+\column{0.49\textwidth}
+\[
+\widetilde{\bm w}^{\mathsf T}\widetilde{\bm x}
+=\bm w^{\mathsf T}\bm x+b
+\]
+\end{columns}
+\vspace{0.45cm}
+\begin{block}{Two useful forms}
+The homogeneous form $\bm w^{\mathsf T}\bm x=0$ passes through the origin. The affine form $\bm w^{\mathsf T}\bm x+b=0$ can be shifted away from the origin.
+\end{block}
+\end{frame}
+
+% 15
+\begin{frame}{A perceptron classifies by choosing a side}
+\keyeq{z=\bm w^{\mathsf T}\bm x+b\qquad\hat y=\phi(z)}
+\begin{columns}[T,onlytextwidth]
+\column{0.47\textwidth}
+\begin{block}{Step activation}
+\[
+\phi(z)=
+\begin{cases}
+1,&z\ge 0,\\
+0,&z<0.
+\end{cases}
+\]
+\end{block}
+\column{0.47\textwidth}
+\begin{exampleblock}{Decision boundary}
+\[
+\bm w^{\mathsf T}\bm x+b=0
+\]
+Positive scores belong to one class; negative scores belong to the other.
+\end{exampleblock}
+\end{columns}
+\end{frame}
+
+% 16
+\begin{frame}{A complete classification takes one dot product}
+Consider the decision boundary:
+\[
+2x_1+x_2-4=0,
+\qquad \bm w=(2,1),\quad b=-4.
+\]
+\begin{columns}[T,onlytextwidth]
+\column{0.46\textwidth}
+\begin{block}{Input $\bm x=(3,1)$}
+\[
+z=2(3)+1-4=3
+\]
+Since $z>0$, the prediction is $\hat y=1$.
+\end{block}
+\column{0.46\textwidth}
+\begin{exampleblock}{Input $\bm x=(1,1)$}
+\[
+z=2(1)+1-4=-1
+\]
+Since $z<0$, the prediction is $\hat y=0$.
+\end{exampleblock}
+\end{columns}
+\end{frame}
+
+% 17
+\begin{frame}{Learning moves the boundary after an error}
+For labels $y\in\{0,1\}$, a common update is:
+\[
+\bm w\leftarrow\bm w+\eta(y-\hat y)\bm x,
+\qquad
+b\leftarrow b+\eta(y-\hat y).
+\]
+\begin{itemize}
+  \item $\eta$ is the learning rate.
+  \item A correct prediction gives $y-\hat y=0$, so no update is made.
+  \item A wrong prediction moves the separating hyperplane toward a better position.
+\end{itemize}
+\begin{alertblock}{Limitation}
+A single perceptron learns only linearly separable patterns. It can represent AND and OR, but not XOR.
+\end{alertblock}
+\end{frame}
+
+% 18
+\begin{frame}{The mathematics converges in the perceptron equation}
+\begin{itemize}
+  \item Algebraic structures provide the rules behind vector spaces.
+  \item Vectors encode direction, magnitude and numerical features.
+  \item Dot products produce norms, angles and orthogonality tests.
+  \item A weight vector determines a hyperplane's orientation.
+  \item Bias shifts the hyperplane, while an activation function assigns the class.
+\end{itemize}
+\vspace{0.35cm}
+\keyeq{\boxed{\hat y=\phi(\bm w^{\mathsf T}\bm x+b)}}
+\begin{center}
+\color{muted}This equation connects linear algebra directly to binary classification.
+\end{center}
+\end{frame}
+
+
+% 20
+\begin{frame}[plain]
+\begin{center}
+\vspace{1.3cm}
+  {\color{navy}\rule{2.0cm}{1.5pt}}\\[0.55cm]
+{\fontsize{34}{38}\selectfont\bfseries\color{navy}Thank You}\\[0.45cm]
+\end{center}
+\end{frame}
+
+\end{document}
